@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": { "url": "https://www.google.com" }
+    },
+    "condition": {
+      "urlFilter": "|http*://xxx*|http*://*porn*",
+      "resourceTypes": ["main_frame"]
+    }
+  }
+]

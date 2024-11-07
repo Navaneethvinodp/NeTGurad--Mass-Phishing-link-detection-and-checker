@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Website Safety Info</title>
+  <style>
+    body { width: 500px; padding: 10px; font-family: Arial, sans-serif; }
+    .safe { color: green; }
+    .warning { color: orange; }
+    .unsafe { color: red; }
+  </style>
+</head>
+<body>
+  <h2>Website Safety Info</h2>
+  <p>URL: <span id="url"></span></p>
+  <p>Safety Score: <span id="safety-score"></span></p>
+  <p>Status: <span id="status"></span></p> <!-- Add this line -->
+  
+  <div id="detailed-info"></div> <!-- This will display detailed safety info -->
+  
+  <div id="fake-website-info" style="display: none;">
+    <h3>Fake Website Analysis</h3>
+    <p>Confidence: <span id="fake-confidence"></span></p>
+    <p>Indicators:</p>
+    <ul id="fake-indicators"></ul>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

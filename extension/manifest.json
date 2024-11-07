@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "Enhanced Website Safety Checker",
+  "version": "1.2",
+  "description": "Check website safety, detect fake sites, and filter explicit content as you browse.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "webNavigation",
+    "webRequest",
+    "declarativeNetRequest",
+    "https://safebrowsing.googleapis.com/*",
+    "https://api.ssllabs.com/*",
+    "https://www.whoisxmlapi.com/*"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js", "fakeDetector.js", "explicitContentDetector.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "declarative_net_request": {
+    "rule_resources": [{
+      "id": "ruleset_1",
+      "enabled": true,
+      "path": "rules.json"
+    }]
+  }
+}
