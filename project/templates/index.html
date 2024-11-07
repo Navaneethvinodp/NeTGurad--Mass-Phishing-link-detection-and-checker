@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeTGuard - Phishing Website Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            background-position: center;
+            color: #ffffff;
+        }
+        header {
+            background: linear-gradient(135deg, rgb(2, 7, 255), rgba(0, 80, 200, 0.8)); /* Gradient background */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-family: 'Arial', sans-serif; /* Font style */
+            letter-spacing: 1px; /* Increase letter spacing */
+            text-transform: uppercase; /* Uppercase text */
+            position: sticky; /* Sticky header */
+            top: 0; /* Stick to top */
+            z-index: 1000; /* Ensure it's on top of other content */
+            transition: background 0.3s ease-in-out; /* Smooth background transition on scroll */
+            }
+
+        header:hover {
+            background: linear-gradient(135deg, #0050c8cc, rgba(0, 123, 255, 0.8)); /* Background changes on hover */
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px; /* Adjust padding for smaller screens */
+                font-size: 18px; /* Adjust font size for responsiveness */
+            }
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-family: 'Helvetica Neue', Arial, sans-serif; /* Improved font choice */
+            font-weight: bold; /* Make the font bold */
+            text-align: center; /* Center text */
+            color: rgba(255, 255, 255, 0.9); /* Slightly transparent white color for better contrast */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Soft shadow for depth */
+            line-height: 1.2; /* Better spacing between lines */
+            padding: 10px; /* Add some padding for breathing room */
+            transition: transform 0.3s ease; /* Add a hover effect */
+        }
+
+        h1:hover {
+            transform: scale(1.05); /* Slightly enlarge the text on hover */
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em; /* Reduce font size for smaller screens */
+                padding: 5px; /* Adjust padding for responsiveness */
+            }
+        }
+        nav {
+            background-color: #b4b6bd; /* Semi-transparent background */
+            padding: 10px;
+            position: sticky; /* Make the navigation stick to the top */
+            top: 0; /* Stick to top */
+            z-index: 1000; /* Ensure it's on top of other content */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+            }   
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin: 0; /* Remove default margin */
+            }
+
+        nav ul li {
+            margin: 0 20px; /* Increased spacing between items */
+            position: relative; /* Enable absolute positioning for the pseudo-element */
+        }
+
+        nav ul li::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #000000; /* Accent color for underline */
+            transition: width 0.3s ease; /* Smooth transition for underline effect */
+            position: absolute;
+            bottom: -5px; /* Position the underline below the text */
+            left: 50%; /* Center it */
+            transform: translateX(-50%); /* Centering adjustment */
+        }
+
+        nav ul li:hover::after {
+            width: 100%; /* Expand underline on hover */
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: color 0.3s, transform 0.3s; /* Add transition for scaling effect */
+        }
+
+        nav ul li a:hover {
+            color: #000000; /* Change color on hover */
+            transform: scale(1.1); /* Slightly enlarge the text on hover */
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column; /* Stack items vertically on smaller screens */
+                align-items: center; /* Center items */
+            }
+
+            nav ul li {
+                margin: 10px 0; /* Adjust spacing for stacked layout */
+            }
+        }
+        form {
+            margin: 20px auto;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 17, 253, 0.611); /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(219, 12, 12, 0.1);
+            transition: box-shadow 0.3s ease; /* Smooth transition for box-shadow */
+        }
+        form:h3{
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        form:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #8f8080;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s; /* Smooth transition for border color */
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff; /* Change border color on focus */
+            outline: none; /* Remove default outline */
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #2600ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.2s; /* Add scaling effect */
+        }
+
+        button:hover {
+            background-color: #5234fc;
+            transform: scale(1.05); /* Slightly enlarge the button on hover */
+        }
+
+        .results, .similar-results, .random-results {
+            margin-top: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(0, 17, 253, 0.611); /* Semi-transparent white background */
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease; /* Smooth transition for box-shadow */
+        }
+
+        .results:hover, .similar-results:hover, .random-results:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+        }
+
+        @media (max-width: 768px) {
+            form {
+                padding: 15px; /* Adjust padding for smaller screens */
+            }
+    
+            input[type="text"], button {
+                font-size: 0.9em; /* Slightly reduce font size on smaller screens */
+            }
+        }
+
+        
+
+
+        .url-status {
+            background-color: #2415d3;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        .url-status:hover {
+            background-color: #000000;
+        }
+        .status-legit {
+            color: green;
+        }
+        .status-fake {
+            color: red;
+        }
+        .loader {
+            display: none;
+            font-size: 18px;
+            margin-top: 10px;
+            color: #000000;
+            text-align: center;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: rgb(102, 102, 102);
+            padding: 10px 0;
+            background-color: rgba(2, 7, 255); /* Semi-transparent background */
+            color: white;
+        }
+       
+        .feature {
+            background: rgba(233, 236, 239, 0.9); /* Semi-transparent background */
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .feature h3 {
+            margin-top: 0;
+        }
+        .icon {
+            font-size: 40px;
+            color: #007bff;
+        }
+        .info-section {
+            margin: 40px auto;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            color: rgb(0, 0, 0)
+        }
+        .info-section p {
+            line-height: 1.5;
+            margin: 10px 0;
+            color: rgb(0, 0, 0)
+        }
+        .feature img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            color: rgb(0, 0, 0)
+        }
+        .feature{
+            color: rgb(0, 0, 0)
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>NeTGuard - Phishing Website Detector</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#url-form">Home</a></li>
+        </ul>
+    </nav>
+
+    <form id="url-form">
+        <input type="text" name="url" id="url" placeholder="Enter website URL" required>
+        <label>
+            <input type="checkbox" id="check_similar" name="check_similar">
+            Check Similar Websites
+        </label>
+        <button type="submit">Check Legitimacy</button>
+    </form>
+    
+    <div class="loader">Processing, please wait...</div>
+
+    
+    
+    <div class="results">
+        <h3>Results:</h3>
+        <div id="original-url-result"></div>
+    </div>
+    
+    
+
+    <div class="random-results">
+        <h3>Randomly Generated Sites:</h3>
+        <div id="random-urls-result"></div>
+    </div>
+
+    
+
+    <div class="feature" id="features">
+        
+        <i class="icon fas fa-shield-alt"></i>
+        <h3>Real-Time Analysis</h3>
+        <p>Get instant feedback on whether a website is legitimate or potentially harmful.</p>
+    </div>
+
+    <div class="feature">
+        
+        <i class="icon fas fa-sitemap"></i>
+        <h3>Similar Website Detection</h3>
+        <p>Check for websites that closely resemble the one you entered, helping to identify phishing attempts.</p>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 NeTGuard - Fake Website Detection Tool. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+        $('#url-form').on('submit', function(event) {
+        event.preventDefault();
+        
+        let url = $('#url').val();
+        let checkSimilar = $('#check_similar').is(':checked');
+        
+        // Clear previous results
+        $('#original-url-result').empty();
+        $('#similar-urls-result').empty();
+        $('#random-urls-result').empty();
+        $('.loader').show();
+        
+        // Send AJAX request to the backend
+        $.ajax({
+            url: '/predict',
+            method: 'POST',
+            data: { url: url, check_similar: checkSimilar },
+            success: function(response) {
+                $('.loader').hide();
+                // Display original URL result
+                $.each(response.results, function(url, status) {
+                    $('#original-url-result').append(`<div class="url-status status-${status.toLowerCase()}">${url}: <strong>${status}</strong></div>`);
+                });
+                
+                // Display similar URLs result
+                if (checkSimilar && response.similar_websites) {
+                    $.each(response.similar_websites, function(url, status) {
+                        $('#similar-urls-result').append(`<div class="url-status status-${status.toLowerCase()}">${url}: <strong>${status}</strong></div>`);
+                    });
+                }
+                
+                // Display random URLs
+                if (response.random_similar_websites) {
+                    $.each(response.random_similar_websites, function(index, url) {
+                        $('#random-urls-result').append(`<div class="url-status">${url}</div>`);
+                    });
+                }
+            },
+            error: function() {
+                $('.loader').hide();
+                $('#original-url-result').text('An error occurred while processing the request.');
+            }
+        });
+    });
+});
+    </script>
+</body>
+</html>
